@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="stylesheet" href = "/css/ind-styles.css">
+  <meta charset="UTF-8" />
+  <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <link rel="shortcut icon" type = "image/jpg" href="/favicon.jpg">
+  <title>CSE 135 Login</title>
+<body>
+  <div class="main">
+    <p class="sign" align="center">Sign in</p>
+    <form class="form1" id = "login">
+      <input class="un " type="text" autocomplete="off" align="center" id="username" placeholder="Username/Email">
+      <input class="pass" type="password" autocomplete="off" align="center" id="password" placeholder="Password">
+      <input class="login" type = "submit" align="center" value="Login!"/>
+      
+                
+    </div>
+    <script>
+        const form = document.getElementById('login')
+        form.addEventListener('submit', login)
+
+        async function login(event){
+          event.preventDefault()
+          const username = document.getElementById('username').value
+          const password = document.getElementById('password').value
+
+          const result = await fetch('https://reporting.jkoh.site/user/login',{
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              username: username,
+              password: password
+            })
+          }).then((res)=> res.json())
+
+          if(result.success){
+            document.cookie = "token=" + result.token
+
+            if(result.role == 'user'){
+                window.location='https://reporting.jkoh.site/user/user-dash'
+                //console.log(result.token)
+            }else if(result.role == 'admin'){
+
+                window.location='https://reporting.jkoh.site/user/admin-dash'
+                //console.log(result.token)
+            }
+          }
+          else{
+            alert("Username or Password is incorrect.")
+          }
+        }
+    </script>
+</body>
+
+</html>

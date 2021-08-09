@@ -1,0 +1,188 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-5">
+            <div class="card">
+                <div class="card-body">
+                    <div id='metricChart' class="container-fluid"></div>
+                    <script>
+                        //ZC.LICENSE = ["569d52cefae586f634c54f86dc99e6a9", "b55b025e438fa8a98e32482b5f768ff5"];
+                        function httpGet(Url) {
+                            var xmlHttp = new XMLHttpRequest();
+                            xmlHttp.open("GET", Url, false);
+                            xmlHttp.send(null);
+                            return xmlHttp.responseText;
+                        }
+                        var aData = JSON.parse(httpGet('https://reporting.jkoh.site/active/active'));
+                        var seriesData = [[Date.now(), 0]]
+                        var userError = [[Date.now(), 0]];
+                        var flag1 = 0;
+                        var flag2 = 0;
+                        // Push the data into the seriesData object's arrays.
+                        for (var n = 0; n < aData.length; n++) {
+                            var nameP = aData[n]['CurrPage']
+                            var year = Number(aData[n]['DateEn'].substring(0, 4));
+                            var month = Number(aData[n]['DateEn'].substring(5, 7)) - 1;
+                            var day = Number(aData[n]['DateEn'].substring(8, 10));
+                            var EZDate = new Date(year, month, day, 12).getTime()
+                              if (nameP != "https://reporting.jkoh.site/wrong_user") {
+                                //seriesData['CurrPage'].push(nameP);
+                                //seriesData['DateEn'].push(aData[n]['DateEn']);
+
+
+                                if (seriesData.length == 1 && flag1 == 0) {
+                                    seriesData = [[EZDate, 1]]
+                                    //console.log(seriesData[0][0])
+                                    //console.log(seriesData[0])
+                                    flag1 = 1;
+                                } else {
+                                    for (var m = 0; m < seriesData.length; m++) {
+                                        if (EZDate == seriesData[m][0]) {
+                                            seriesData[m][1]++;
+                                            break;
+                                        }
+                                        else if (m == (seriesData.length - 1)) {
+                                            seriesData.push([EZDate, 1]);
+                                            break;
+                                        }
+                                    }
+                                }
+
+                            }
+                            else if(nameP == "https://reporting.jkoh.site/wrong_user"){
+                                if(userError.length == 1 && flag2 == 0){
+                                    userError = [[EZDate,1]]
+                                    flag2= 1;
+                                } else{
+                                    for(var m = 0; m < userError.length; m++){
+                                        if(EZDate == userError[m][0]){
+                                            userError[m][1]++
+                                            break
+                                        }
+                                        else if (m == (userError.length - 1)){
+                                            userError.push([EZDate,1])
+                                            break
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (flag1 = 0) {seriesData = []}
+                        if (flag2 = 0) {userError = []}
+                        seriesData.sort()
+
+                        userError.sort()
+
+                        var myConfig = {
+                            type: "line",
+                            title: { text: "Invalid URLS/Error URLS" },
+                            subtitle: { text: "Since June 5th, 2021" },
+                            tooltip: {
+                                text: '%t\n%v'
+                            },
+
+                            'scale-x': {
+                                transform: {
+                                    zooming: true,
+                                    type: 'date',
+                                    all: '%m/%d/%y',
+                                    label: { text: "Date" }
+                                }
+                            },
+                            'scale-y': {
+                                zooming: true,
+                                label: { text: "Amount" },
+                                "guide": {
+                                    "line-style": "solid",
+                                    "line-width": 1,
+                                    "line-color": "gray",
+                                    "alpha": 0.9
+                                },
+                            },
+
+                            series: [{
+                                values: seriesData,
+                                text: "Invalid",
+                                    "line-color": "#ff0000",
+                                marker: {
+                                    "background-color": "#ff0000"
+                                }
+                         
+                            },{
+                                values: userError,
+                                "line-color": "#59d3ff",
+                                text: "wrong user",
+                                marker: {
+                                    "background-color": "#59d3ff"
+                                }
+                            }
+                            ]
+                        };
+
+                        zingchart.render({
+                            id: 'metricChart',
+                            data: myConfig,
+                            height: 600,
+                            width: "100%"
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-7">
+            <div class="card  ">
+                <div class="card-body">
+                    <div class="container-fluid">
+                        <h5 class="card-title">Report</h5>
+                        <p class="card-text">
+                            &emsp;The main question being asked is, <strong>"what are people trying to access and do?"</strong> 
+                            I also answer, <strong>"How often am I getting this certain error?"</strong> To answer this, 
+                            I first create a line graph to keep track of any invalid urls and errors I encounter per day. This is mainly
+                            to see if their are outliers in my dataset that can't be visualized through a datagrid. A grid still
+                            is needed to fill in the missing holes for invalid urls. I created a special database list that I can display on zinggrid 
+                            that displays only my "invalid url pages." It also displays "wrong_user" error just in case. "Wrong user" error 
+                            can still help me answer the first question. In my database grid, I also enabled the search and filter feature. 
+                            By showing the invalid urls per day in my chart and displaying the name of the url in my grid, I can search 
+                            up and filter each day in my grid.
+                        <p>
+                            &emsp;The 1st and main question is to see who is meddling with my url and/or website. If there are outliers or spike 
+                            in my line chart, it can be the first indicator of something being wrong and look at the grid. This can be said about both lines. 
+                            By recording what they type into my url, I can do a low Level identitifaction process of whether or not 
+                            they have malicious intent. This process can easily be expanded on by adding more levels myself or by possibly 
+                            adding a 3rd party tool. If I figure out and identify malicious intent, I have their ID displayed so that 
+                            I can see what else they have been trying to do. In other words, I look at their complete static, 
+                            performance, and activity dataset. If deemed malicious, I can block them. If they caused harm, I can get a 
+                            low level understanding of their thought process and what they are trying to do. In my current case, I just have test
+                            errors that don't really show anything besides someone poking around and spamming my url. There has been no real
+                            malicious threat to my website.
+                        </p>
+                        <p>
+                            &emsp;The secondary question is to have some error checking. For this project, I have added 1 specific 
+                            error handling page of "wrong user." My implementation of the project clearly shows 2 different types 
+                            of users in the url, so adding "wrong user" to the error is to see how many people try to switch to the 
+                            admin view and/or the user view. This still can be used to support my first question of who is trying to 
+                            access something they shouldn't and how often are people trying.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div>
+                        <zing-grid src="https://reporting.jkoh.site/active/active" caption="Error Pages" search filter pager
+                            pager-position="bottom" page-size="5" page-size-options="5,10,15,20" page-size-card="5"
+                            pager-type="button-arrows" theme="ios">
+                            <zg-column index="DateEn" header="Date Entered"></zg-column>
+                            <zg-column index="CurrPage" header="Page Viewed"></zg-column>
+                            <zg-column index="_id" header="ID"></zg-column>
+                            <zg-column index="DateLeft" header="Date Left"></zg-column>
+                        </zing-grid>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

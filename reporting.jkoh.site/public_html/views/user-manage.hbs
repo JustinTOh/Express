@@ -1,0 +1,86 @@
+<script type="module" src="/functions.js"></script>
+
+  <div class="centered">
+    <button id="show-modal-create" type="button" class="btn btn-primary">
+      Create New User
+    </button>
+
+    <button id="show-modal-update" type="button" class="btn btn-primary">
+      Update/Delete User
+    </button>
+  </div>
+  <div id="grid">
+    <zing-grid src="https://reporting.jkoh.site/user/" caption="Users" search page-size="5"
+      page-size-options="5,10,15,20" page-size-card="5" pager-type="button-arrows"
+      theme="https://storage.googleapis.com/zinggrid-pwa.appspot.com/mytheme.css">
+      <zg-colgroup>
+        <zg-column index="_id"></zg-column>
+        <zg-column index="role"></zg-column>
+        <zg-column index="username"></zg-column>
+        <zg-column index="email"></zg-column>
+      </zg-colgroup>
+    </zing-grid>
+  </div>
+
+  <div class="modal_mine modal_mine--hidden" id="create">
+    <div class="modal_mine_contents">
+      <div class="modal_mine_close-bar">
+        <span>X</span>
+      </div>
+      <form id="reg-form">
+        <div>
+          <h1>Register</h1>
+          <p>Please fill in this form to create an account. All Fields are needed</p>
+          <hr>
+          <label for="email"><b>username</b></label>
+          <input type="text" placeholder="Enter Username" name="username" id="userCreate" required>
+          </br>
+          <label for="email"><b>Email</b></label>
+          <input type="text" placeholder="Enter Email" name="email" id="emailCreate" required>
+          </br>
+          <label for="psw"><b>Password</b></label>
+          <input type="password" placeholder="Enter Password" name="psw" id="pwCreate" required>
+          </br>
+          <label for="psw-repeat"><b>role</b></label>
+          <input type="text" placeholder="Permission Level" name="role" id="roleCreate" required>
+          <hr>
+
+          <button class="button_crud" type="submit" id="createUser">Register</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal_mine modal_mineD--hidden" id="delete">
+    <div class="modal_mine_contents">
+      <div class="modal_mine_close-barD">
+        <span>X</span>
+      </div>
+      <form id="del-form">
+        <div>
+          <h1>Delete or Update</h1>
+          <p>Enter what you want to Update. ID NEEDED</p>
+          <hr>
+          <label for="email"><b>ID</b></label>
+          <input type="text" placeholder="Enter db ID" name="ID" id="idU_D" required>
+          </br>
+          <label for="email"><b>username</b></label>
+          <input type="text" placeholder="Enter Username" name="username" id="userU_D">
+          </br>
+          <label for="email"><b>Email</b></label>
+          <input type="text" placeholder="Enter Email" name="email" id="emailU_D">
+          </br>
+          <label for="psw"><b>Password</b></label>
+          <input type="password" placeholder="Enter Password" name="psw" id="pwU_D">
+          </br>
+          <label for="psw-repeat"><b>role</b></label>
+          <input type="text" placeholder="Permission Level" name="role" id="roleU_D">
+          <hr>
+
+          <button class="button_crud" type="submit" id="updateUser">Update</button>
+          <button class="button_crud" type="submit" id="deleteUser">Delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+

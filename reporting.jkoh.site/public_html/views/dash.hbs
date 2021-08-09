@@ -1,0 +1,184 @@
+<div class="container-fluid">
+  <zing-grid src="https://reporting.jkoh.site/perform" caption="Time Object" search pager pager-position="top"
+    page-size="5" page-size-options="5,10,15,20" page-size-card="5" pager-type="button-arrows" theme="ios">
+    <zg-param name="recordPath" value="TimeObject"></zg-param>
+    <zg-column index="TimeObject.domainLookupStart"></zg-column>
+    <zg-column index="TimeObject.domainLookupEnd"></zg-column>
+    <zg-column index="TimeObject.connectStart"></zg-column>
+    <zg-column index="TimeObject.connectEnd"></zg-column>
+    <zg-column index="TimeObject.requestStart"></zg-column>
+    <zg-column index="TimeObject.responseEnd"></zg-column>
+    <zg-column index="TimeObject.domComplete"></zg-column>
+  </zing-grid>
+</div>
+<h3>Charts</h3>
+<hr>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <div id='myChart' class="container-fluid"></div>
+          <script>
+            //ZC.LICENSE = ["569d52cefae586f634c54f86dc99e6a9", "b55b025e438fa8a98e32482b5f768ff5"];
+            function httpGet(Url) {
+              var xmlHttp = new XMLHttpRequest();
+              xmlHttp.open("GET", Url, false);
+              xmlHttp.send(null);
+              return xmlHttp.responseText;
+            }
+            var aData = JSON.parse(httpGet('https://reporting.jkoh.site/active'));
+            var seriesData = {
+              TotalIdle: [],
+              TimeSpent: [],
+            };
+
+            // Push the data into the seriesData object's arrays.
+            for (var n = 0; n < aData.length; n++) {
+              var total = 0;
+              for (var m = 0; m < aData[n]['TotalIdle'].length; m++) {
+                total = total + aData[n]['TotalIdle'][m];
+              }
+              if(aData[n]['TimeSpent'] > total && (aData[n]['TimeSpent']/1000) > 5){
+                seriesData['TotalIdle'].push(Math.round((total / 1000)));
+                seriesData['TimeSpent'].push(Math.round(((aData[n]['TimeSpent'] / 1000)- (total / 1000))));
+              }
+
+            }
+            var myConfig = {
+              type: "bar",
+              stacked: true,
+              legend: {},
+              title: { text: "Idle vs Total Time (s)" },
+              subtitle: {text: "zoom enabled"},
+              tooltip: {
+                text: '%t\n%v'
+              },
+              'scale-x': {
+                zooming: true,
+                label: { text: "Collections" }
+              },
+              'scale-y': {
+                zooming: true,
+                label: { text: "Seconds" },
+                "guide": {
+                  "line-style": "solid",
+                  "line-width": 1,
+                  "line-color": "gray",
+                  "alpha": 0.7
+                },
+              },
+            
+              series: [{
+                values: seriesData["TotalIdle"],
+                text: "Idle Time",
+                "background-color": "#FF0000",
+                stack: 1
+              },
+              {
+                values: seriesData["TimeSpent"],
+                text: "Active Time",
+                "background-color": "#4ad400",
+                stack: 1
+              }
+              ]
+            };
+
+            zingchart.render({
+              id: 'myChart',
+              data: myConfig,
+              height: 600,
+              width: "95%"
+            });
+          </script>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <div id='thirdChart' class="container-fluid"></div>
+          <script>
+            //ZC.LICENSE = ["569d52cefae586f634c54f86dc99e6a9", "b55b025e438fa8a98e32482b5f768ff5"];
+            function httpGet(Url) {
+              var xmlHttp = new XMLHttpRequest();
+              xmlHttp.open("GET", Url, false);
+              xmlHttp.send(null);
+              return xmlHttp.responseText;
+            }
+            var aData = JSON.parse(httpGet('https://reporting.jkoh.site/static'));
+            var mobile = 0;
+            var desktop = 0;
+
+            // Push the data into the seriesData object's arrays.
+            for (var n = 0; n < aData.length; n++) {
+              if (aData[n]['Agent_string'].includes("Mobi")) {
+                mobile = mobile + 1;
+              }
+              else {
+                desktop = desktop + 1;
+              }
+            }
+            var myConfig = {
+              type: "pie",
+              title: {
+                text: "Mobile vs Desktop"
+              },
+              plot: {
+                valueBox: {
+                  placement: 'out',
+                  text: '%t\n%npv%',
+                }
+              },
+
+              series: [{
+                values: [mobile],
+                "background-color": "#ff8112",
+                text: "Phone/Tablet"
+              },
+              {
+                text: "Desktop",
+                "background-color": "#0f6bff",
+                values: [desktop]
+              }]
+            };
+
+            zingchart.render({
+              id: 'thirdChart',
+              data: myConfig,
+              height: 600,
+              width: "95%"
+            });
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Invoice #184389</h5>
+          <p class="card-text">Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci.
+            Aenean dignissim pellentesque felis.</p>
+          <a href="#" class="btn btn-primary">Print</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Invoice #184391</h5>
+          <p class="card-text">Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci.
+            Aenean dignissim pellentesque felis.</p>
+          <a href="#" class="btn btn-primary">Print</a>
+        </div>
+      </div>
+    </div>
+  </div> 
+ -->
+
+</div>

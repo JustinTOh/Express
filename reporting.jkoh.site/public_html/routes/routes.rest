@@ -1,0 +1,19 @@
+POST http://reporting.jkoh.site/user/register
+Content-Type: application/json
+
+{
+    "username":"grader",
+    "password":"Fr3nchFr13s",
+    "email": "grader@jkoh.edu"
+}
+
+###
+
+POST http://reporting.jkoh.site/user/register
+Content-Type: application/json
+
+{
+    "username":"firstuser",
+    "password":"Fr3nchFr13s",
+    "email": "user@jkoh.edu"
+}
